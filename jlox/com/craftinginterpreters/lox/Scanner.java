@@ -18,6 +18,28 @@ class Scanner {
     private int current = 0;
     private int line = 1;
 
+    //define a map of reserved keywords
+    private static final Map<String, TokenType> keywords;
+    static {
+        keywords = new HashMap();
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("true", TRUE);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
+    }
+
     Scanner(String source) {
         this.source = source;
     }
@@ -95,10 +117,19 @@ class Scanner {
             case '"': string(); break;
 
             default:
-            //We get an input token we don't recognise, like '@'
-            //We will still continue scanning! But calling error() means the code isn't executed (as hasError is set)
+            if (isDigit(c)) {
+                //numeric literal
+                number();
+            } else if (isAlpha(c)) {
+                //assume this 'word' is an identifier
+                identifier();
+            } else {
+                //We get an input token we don't recognise, like '@'
+                //We will still continue scanning! But calling error() means the code isn't executed (as hasError is set)
                 Lox.error(line, "Unexpected character");
-                break;
+            }
+            break;
+            
         }
     }
 
@@ -155,6 +186,68 @@ class Scanner {
         //if we supported escape characters we would have to unescape them here as well
         String trimmedString = source.substring(start+1, current-1);
         addToken(STRING, trimmedString);
+    }
+
+    //classifies character as 0-9
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    //handles a numeric literal
+    private void number() {
+        //consume digits
+        while (isDigit(peek())) {
+            advance();
+        }
+
+        //look for a fractional part i.e. '.'
+        //peeknext => lookahead by 2 characters as we have to look after the decimal point
+        if (peek() == '.' && isDigit(peekNext())) {
+            //consume the '.'
+            advance();
+            //keep consuming digits
+            while (isDigit(peek())) {
+                advance();
+            }
+        }
+
+        addToken(NUMBER, Double.parseDouble(source.substring(start,current)));
+
+    }
+
+    //lookahead by 2 characters
+    private char peekNext() {
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
+    }
+
+    //classifies character as a-z or A-Z or _
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+               (c >= 'A' && c <= 'Z') ||
+               (c == '_');
+    }
+
+    //classifies character as alphabetical or numeric
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    //handles identifiers
+    private void identifier() {
+        //read alphanumeric characters
+        while (isAlphaNumeric(peek())) {
+            advance();
+        }
+
+        //check to see if the identifier is a reserved keyword
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text); //if this lookup fails it will return 'null'
+        if (type == null) {
+            type = IDENTIFIER;
+        }
+        addToken(type);
+
     }
 
     //helper function for addToken(type, literal)
