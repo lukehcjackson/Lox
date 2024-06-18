@@ -6,3 +6,5 @@ Error: Unexpected "," in argument list.
 
     15 | function(first, second,);
                                ^-- Here.
+
+-multiline comments: challenges 4.4

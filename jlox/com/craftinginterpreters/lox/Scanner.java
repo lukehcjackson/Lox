@@ -21,7 +21,7 @@ class Scanner {
     //define a map of reserved keywords
     private static final Map<String, TokenType> keywords;
     static {
-        keywords = new HashMap();
+        keywords = new HashMap<>();
         keywords.put("and", AND);
         keywords.put("class", CLASS);
         keywords.put("else", ELSE);
@@ -51,7 +51,6 @@ class Scanner {
             start = current;
             //Each iteration, scan one token
             scanToken();
-
         }
 
         //append an EOF token to the end of the token list
@@ -61,7 +60,6 @@ class Scanner {
 
     private void scanToken() {
         
-        //do we ever scan the first token since we immediately look at current++ ??
         char c = advance();
 
         switch (c) {
@@ -141,13 +139,14 @@ class Scanner {
     //get next character in source code string
     private char advance() {
         return source.charAt(current++);
+        //returns source.charAt(current), THEN increments current
     }
 
     //does the next character in the lexeme match our expectation?
     private boolean match(char expected) {
         //on the last character of the source code => return false, as there's nothing left to scan
         if (isAtEnd()) return false;
-        //if the next character != expected => return false (why is this right? is this not looking at the current character still?)
+        //if the next character != expected => return false
         if (source.charAt(current) != expected) return false;
 
         current++;

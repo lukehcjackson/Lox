@@ -65,7 +65,7 @@ public class Lox {
     //main run() function
     //actually does something!!
     private static void run(String source) {
-        /* 
+        
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
@@ -73,9 +73,7 @@ public class Lox {
         for (Token token : tokens) {
             System.out.println(token);
         }
-        */
-
-        System.out.println("test");
+        
     }
 
     //error reporting function
