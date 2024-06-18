@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
+
+    static boolean hadError = false;
+
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             //invalid number of arguments
@@ -29,6 +32,11 @@ public class Lox {
 
         //this and runPrompt() are really wrapper methods around this main run() function
         run(new String(bytes, Charset.defaultCharset()));
+
+        //check for errors
+        if (hadError) {
+            System.exit(65);
+        }
     }
 
     //no arguments => run an interactive command prompt
@@ -47,6 +55,10 @@ public class Lox {
             }
             //call run() like above
             run(line);
+            
+            //reset hadError flag - if the user types an incorrect line in the interactive session,
+            //they should just be able to retry instead of it crashing
+            hadError = false;
         }
     }
 
@@ -65,4 +77,16 @@ public class Lox {
 
         System.out.println("test");
     }
+
+    //error reporting function
+    static void error(int line, String message) {
+        report(line, "", message);
+    }
+
+    //error reporting helper function: print to stderr and set hadError class attribute
+    private static void report(int line, String where, String message) {
+        System.err.println("[line " + line + "] Error" + where + ": " + message);
+        hadError = true;
+    }
+
 }

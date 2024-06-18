@@ -1,0 +1,8 @@
+"nice to haves":
+
+-better error reporting: e.g.
+
+Error: Unexpected "," in argument list.
+
+    15 | function(first, second,);
+                               ^-- Here.
