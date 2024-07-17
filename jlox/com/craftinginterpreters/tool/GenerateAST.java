@@ -24,13 +24,18 @@ public class GenerateAST {
         //they can be of one of four types
         //binary expressions take two expressions, one on either side of an operator
         //grouping - i.e brackets () - just surround one expression
-        //literal - i.e. x
-        //unary - i.e. -10
+        //literal - i.e. x - has a value
+        //unary - i.e. -10 - has an operator and a right operand
         defineAst(outputDir, "Expr", Arrays.asList (
             "Binary     : Expr left, Token operator, Expr right",
             "Grouping   : Expr expression",
             "Literal    : Object value",
             "Unary      : Token operator, Expr right"
+        ));
+
+        defineAst(outputDir, "Stmt", Arrays.asList(
+            "Expression : Expr expression",
+            "Print      : Expr expression"
         ));
 
     }
